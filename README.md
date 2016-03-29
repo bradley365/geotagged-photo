@@ -1,6 +1,14 @@
 # geotagged-photo
-HTML5 single page app to create a CSV file for mapping.
+HTML5 single page app to create a CSV file from GPS tagged photos for mapping.
 
+###Description
+This app reads the GPS-related EXIF tags from photos taken with a device using location services with the camera. *The photos and the EXIF tags are not uploaded to a server* but are read and the information is presented on your browser by a JavaScript.  This app uses a cache-manifest to store the html and JavaScripts in the browser's cache so it can be used when a network connection is not available.
+
+It has been tested on Opera 36.0, Chrome 49.0 (Android & Windows), Firefox 42, Internet Explorer 11, Safari 9 (iPhone).  Because iOS does not allow downloading files, the CSV data is presented in a new window where it can be copied to a message or email.
+
+Tips for using the GPS data in a mapping application are included at the bottom of the page after selecting photos.
+
+See a [Demo](http://bradley365.elementfx.com/geotagged-photo/).
 
 
 ###Attribution

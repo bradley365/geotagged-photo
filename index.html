@@ -21,6 +21,7 @@
                 margin-right: auto;
                 max-width: 800px;
                 padding:10pt;
+                height: 100%;
             }
             .select-button{
                 background-color: #FCAF3E;
@@ -80,74 +81,96 @@
                 font-family: 'Roboto', sans-serif;
                 background: linear-gradient(#EEEEEC, #D3D7CF);
             }
+            .page: {
+                min-height:100%;
+                position:relative;
+            }
+            .footer {
+                width:100%;
+                padding: 5px 0px;
+                position:absolute;
+                bottom:0;
+                left:0;
+                text-align: center;
+                background: linear-gradient(#EEEEEC, #D3D7CF);
+            }
+            .foot-link {
+                height:100%;
+                margin: 20px 0px;
+                color:#2E3436;
+                font-weight: 400;
+                font-size: 10pt;
+            }
         </style>
         <script src="exif.js"></script>
     </head>
     <body>
-        <p class="header">Mapping Geotagged Photos</p>
-        <p>
-            This app will help create a CSV file using the GPS metadata from photos taken with amobile device.  The device
-            must enable location services (including on the camera app) before GPS metadata can be recorded with a photo.
-            Click the Select Photos button and select the photos to use for creating the CSV file.  <i>The photos and the metadata
-            are not uploaded to a server</i> but are read and the information is presented locally on your browser by a script
-            in this app.  This app is also cached so it can be used even when a network connection is not avialable.
-        </p>
-        <div class="panel">
-            <label for="photoselect" class="select-button">
-                <input type="file" id="photoselect" multiple accept="image/jpeg">
-                <i class="fa fa-upload"></i> Select Photos
-            </label>
-        </div>
-        <div id="resultsCSV" style="display: none">
+        <div class="page">
+            <p class="header">Mapping Geotagged Photos</p>
+            <p>
+                This app will help create a CSV file using the GPS metadata from photos taken with a mobile device.  The device
+                must enable location services (including on the camera app) before GPS metadata can be recorded with a photo.
+                Click the Select Photos button and select the photos to use for creating the CSV file.  <i>The photos and the metadata
+                are not uploaded to a server</i> but are read and the information is presented locally on your browser by a script
+                in this app.  This app is also cached so it can be used even when a network connection is not available.
+            </p>
             <div class="panel">
-                <textarea id="coordinateCSV" rows="10" style="width:100%" readonly="True"></textarea>
+                <label for="photoselect" class="select-button">
+                    <input type="file" id="photoselect" multiple accept="image/jpeg">
+                    <i class="fa fa-upload"></i> Select Photos
+                </label>
             </div>
-            <div class="panel-bottom">
-                <a href="#" class="button" onclick="clearCSV()"><i class="fa fa-times"></i> Clear</a>
-                <a href="#" id="downloadLink" class="button" onclick="downloadCSV()"><i class="fa fa-download"></i> Download</a>
-                
-            </div>
-            <div class="tips">
-                <p><span class="heavy">Tips for use:</span></p>
-                <ul>
-                    <li>Use a text editor to prepend the full image path to the name field.</li>
-                    <li>
-                        <span class="heavy">ArcGIS</span>
-                        <ol>
-                            <li>Add the CSV file to a map using the Add XY Data menu.</li>
-                            <li>Use the lon field as the X values and the lat field as the Y values.</li>
-                            <li>Set the Coordinate System to WGS 1984.</li>
-                            <li>
-                                View the Display Tab on the Properites dialog on the CSV Layer
-                                <ul>
-                                    <li>Check Supports Hyperlink</li>
-                                    <li>Select the name field and use the Document option.</li>
-                                </ul>
-                            </li>
-                        </ol>
-                    </li>
-                    <li>
-                        <span class="heavy">QGIS</span>
-                        <ol>
-                            <li>Add the CSV file to a map using the Add Delimited Text Layer menu.</li>
-                            <li>Use the lon field as the X values and the lat field as the Y values.</li>
-                            <li>Set the Coordinate Reference System to WGS 84 (EPSG 4326).</li>
-                            <li>Create a layer Action that will open the file using the name field.</li>
-                        </ol>
-                    </li>
-                    <li>
-                        <span class="heavy">Google Earth Pro</span>
-                        <ol>
-                            <li>Open the CSV file.</li>
-                            <li>View the Properties on the CSV layer.</li>
-                            <li>On the Style Tab, in the the first table row, change <i>$[geotagged/name]</i> to <br/><i> &lt;a href=file:///$[geotagged/name]&gt;$[geotagged/name]&lt;/a&gt;</i>.</li>
-                        </ol>
-                    </li>
+            <div id="resultsCSV" style="display: none">
+                <div class="panel">
+                    <textarea id="coordinateCSV" rows="10" style="width:100%" readonly="True"></textarea>
+                </div>
+                <div class="panel-bottom">
+                    <a href="#" class="button" onclick="clearCSV()"><i class="fa fa-times"></i> Clear</a>
+                    <a href="#" id="downloadLink" class="button" onclick="downloadCSV()"><i class="fa fa-download"></i> Download</a>
                     
-                </ul>
+                </div>
+                <div class="tips">
+                    <p><span class="heavy">Tips for use:</span></p>
+                    <ul>
+                        <li>Use a text editor to prepend the full image path to the name field.</li>
+                        <li>
+                            <span class="heavy">ArcGIS</span>
+                            <ol>
+                                <li>Add the CSV file to a map using the Add XY Data menu.</li>
+                                <li>Use the lon field as the X values and the lat field as the Y values.</li>
+                                <li>Set the Coordinate System to WGS 1984.</li>
+                                <li>
+                                    View the Display Tab on the Properties dialog on the CSV Layer
+                                    <ul>
+                                        <li>Check Supports Hyperlink</li>
+                                        <li>Select the name field and use the Document option.</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </li>
+                        <li>
+                            <span class="heavy">QGIS</span>
+                            <ol>
+                                <li>Add the CSV file to a map using the Add Delimited Text Layer menu.</li>
+                                <li>Use the lon field as the X values and the lat field as the Y values.</li>
+                                <li>Set the Coordinate Reference System to WGS 84 (EPSG 4326).</li>
+                                <li>Create a layer Action that will open the file using the name field.</li>
+                            </ol>
+                        </li>
+                        <li>
+                            <span class="heavy">Google Earth Pro</span>
+                            <ol>
+                                <li>Open the CSV file.</li>
+                                <li>View the Properties on the CSV layer.</li>
+                                <li>On the Style Tab, in the the first table row, change <i>$[geotagged/name]</i> to <br/><i> &lt;a href=file:///$[geotagged/name]&gt;$[geotagged/name]&lt;/a&gt;</i>.</li>
+                            </ol>
+                        </li>
+                        
+                    </ul>
+                </div>
             </div>
+            <div class="footer"><a class="foot-link" href="https://github.com/bradleynhicks/geotagged-photo">See it on GitHub!</div>
         </div>
-        
         <script>
             function clearCSV() {
                 document.getElementById("resultsCSV").style.display="none";
