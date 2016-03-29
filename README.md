@@ -1,7 +1,7 @@
 # geotagged-photo
 HTML5 single page app to create a CSV file for mapping.
 
----
+
 
 ###Attribution
 Original source of the [exif-js](https://github.com/exif-js/exif-js) library use in this app : [exif-js and contributors - https://github.com/exif-js/exif-js](https://github.com/exif-js/exif-js).
@@ -14,7 +14,7 @@ Original source of the [exif-js](https://github.com/exif-js/exif-js) library use
 
 [Google Fonts (Roboto) https://www.google.com/fonts](https://www.google.com/fonts)
 
----
+
 ###License
 The MIT License (MIT)
 
