@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en" manifest="cache.manifest">
+    <head>
+        <meta charset="utf-8">
+        <title>Mapping Geotagged Photos</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Mapping with geotagged photos">
+        <meta name="author" content="bradleynhicks">
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link href='https://fonts.googleapis.com/css?family=Roboto:500,400,300,200' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+        <style>
+            body{
+                background-color: #2E3436;
+                font-family: 'Roboto', sans-serif;
+                font-size: 12pt;
+                font-weight:300;
+                padding: 10pt;
+                color: #EEEEEC;
+                margin-left: auto;
+                margin-right: auto;
+                max-width: 800px;
+                padding:10pt;
+            }
+            .select-button{
+                background-color: #FCAF3E;
+                background: linear-gradient(#FCAF3E, #F57900);
+                border-radius: 5px;
+                padding:10px 15px;
+                box-shadow: 5px 5px 10px #000000;
+                font-size: 1.2em;
+                font-weight:300;
+                color: #EEEEEC;
+                text-shadow: 1px 1px #2E3436;
+                width: 105px;
+            }
+            .select-button:hover{
+                background: linear-gradient(#F9C47A, #F57900);
+            }
+            .select-button:active{
+                background: linear-gradient(#F57900, #D86800);
+            }
+            input[type="file"] {display: none;}
+            .panel {
+                text-align: center;
+                padding: 20px;
+            }
+            .panel-bottom {
+                text-align: right;
+                padding: 0px 20px;
+            }
+            .button {
+                margin: 0px 10px 30px 20px;
+                padding: 10px 25px;
+                background: #c0c0c0;
+                border-radius: 5px;
+                color: #EEEEEC;
+                text-shadow: 1px 1px #2E3436;
+                font-family: 'Roboto', sans-serif;
+                font-size: 12pt;
+                font-weight:300;
+                text-decoration: none;
+                width: 105px;
+                display: inline-block;
+                text-align: center;
+                background: linear-gradient(#FCAF3E, #F57900);
+                box-shadow: 5px 5px 10px #000000;
+            }
+            .header {
+                 font-size: 18pt;
+                 font-weight:500;
+            }
+            .tips { font-size:11pt;
+            padding: 0px 25px;
+            }
+            .heavy {
+                font-weight:400;
+            }
+            textarea {
+                font-family: 'Roboto', sans-serif;
+                background: linear-gradient(#EEEEEC, #D3D7CF);
+            }
+        </style>
+        <script src="exif.js"></script>
+    </head>
+    <body>
+        <p class="header">Mapping Geotagged Photos</p>
+        <p>
+            This app will help create a CSV file using the GPS metadata from photos taken with amobile device.  The device
+            must enable location services (including on the camera app) before GPS metadata can be recorded with a photo.
+            Click the Select Photos button and select the photos to use for creating the CSV file.  <i>The photos and the metadata
+            are not uploaded to a server</i> but are read and the information is presented locally on your browser by a script
+            in this app.  This app is also cached so it can be used even when a network connection is not avialable.
+        </p>
+        <div class="panel">
+            <label for="photoselect" class="select-button">
+                <input type="file" id="photoselect" multiple accept="image/jpeg">
+                <i class="fa fa-upload"></i> Select Photos
+            </label>
+        </div>
+        <div id="resultsCSV" style="display: none">
+            <div class="panel">
+                <textarea id="coordinateCSV" rows="10" style="width:100%" readonly="True"></textarea>
+            </div>
+            <div class="panel-bottom">
+                <a href="#" class="button" onclick="clearCSV()"><i class="fa fa-times"></i> Clear</a>
+                <a href="#" id="downloadLink" class="button" onclick="downloadCSV()"><i class="fa fa-download"></i> Download</a>
+                
+            </div>
+            <div class="tips">
+                <p><span class="heavy">Tips for use:</span></p>
+                <ul>
+                    <li>Use a text editor to prepend the full image path to the name field.</li>
+                    <li>
+                        <span class="heavy">ArcGIS</span>
+                        <ol>
+                            <li>Add the CSV file to a map using the Add XY Data menu.</li>
+                            <li>Use the lon field as the X values and the lat field as the Y values.</li>
+                            <li>Set the Coordinate System to WGS 1984.</li>
+                            <li>
+                                View the Display Tab on the Properites dialog on the CSV Layer
+                                <ul>
+                                    <li>Check Supports Hyperlink</li>
+                                    <li>Select the name field and use the Document option.</li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </li>
+                    <li>
+                        <span class="heavy">QGIS</span>
+                        <ol>
+                            <li>Add the CSV file to a map using the Add Delimited Text Layer menu.</li>
+                            <li>Use the lon field as the X values and the lat field as the Y values.</li>
+                            <li>Set the Coordinate Reference System to WGS 84 (EPSG 4326).</li>
+                            <li>Create a layer Action that will open the file using the name field.</li>
+                        </ol>
+                    </li>
+                    <li>
+                        <span class="heavy">Google Earth Pro</span>
+                        <ol>
+                            <li>Open the CSV file.</li>
+                            <li>View the Properties on the CSV layer.</li>
+                            <li>On the Style Tab, in the the first table row, change <i>$[geotagged/name]</i> to <br/><i> &lt;a href=file:///$[geotagged/name]&gt;$[geotagged/name]&lt;/a&gt;</i>.</li>
+                        </ol>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+        <script>
+            function clearCSV() {
+                document.getElementById("resultsCSV").style.display="none";
+                document.getElementById("coordinateCSV").value = "";
+            }
+            
+            function downloadCSV() {
+                var blob = new Blob([document.getElementById("coordinateCSV").value],{type:'text/plain'});
+                var blobUrl = URL.createObjectURL(blob);
+                var link = document.getElementById("downloadLink"); 
+                link.href = blobUrl;
+                link.download =  'geotagged.csv';
+                
+                if (typeof navigator.msSaveOrOpenBlob !== 'undefined') {
+                    return navigator.msSaveOrOpenBlob(blob, link.download);
+                } else if (typeof navigator.msSaveBlob !== 'undefined') {
+                    return navigator.msSaveBlob(blob, link.download);
+                }
+                
+                var evt = new MouseEvent('click', {
+                    view: window, bubbles: true, cancelable: true });
+            }
+            
+            document.getElementById("photoselect").onchange = function (e) {
+                files = e.target.files;
+                if (files.length == 0) { return };
+    
+                if (FileReader && files && files.length) {
+                    document.getElementById("resultsCSV").style.display="block";
+                    document.getElementById("coordinateCSV").value = "name,lat,lon,alt,alt_ref,speed,speed_ref,head,head_ref,date,time,hpe\n"
+                    coordinates = [];
+                    for (var i = 0; i < files.length; i++) {
+                        var coordinate={};
+                        coordinate["name"] = files[i].name;
+                        EXIF.getData(files[i], function () {
+                            var lat=EXIF.getTag(this,"GPSLatitude");
+                            var latref=EXIF.getTag(this,"GPSLatitudeRef");
+                            var lon=EXIF.getTag(this,"GPSLongitude");
+                            var lonref=EXIF.getTag(this,"GPSLongitudeRef");
+                            if (latref=="S") {(lat *= -1)}
+                            if (lonref=="W") {(lon *= -1)}
+                            coordinate["lat"] = parseFloat(lat) || 0;
+                            coordinate["lon"] = parseFloat(lon) || 0;
+                            coordinate["alt"] = EXIF.getTag(this,"GPSAltitude") || 0;
+                            coordinate["alt_ref"] = "m";
+                            coordinate["speed"] = EXIF.getTag(this,"GPSSpeed") || 0;
+                            coordinate["speed_ref"] = EXIF.getTag(this,"GPSSpeedRef") || "";
+                            coordinate["head"] = parseFloat(EXIF.getTag(this,"GPSImgDirection")) || "";
+                            coordinate["head_ref"] = EXIF.getTag(this,"GPSImgDirectionRef") || 0;
+                            var dt = EXIF.getTag(this,"GPSDateStamp") || "";
+                            if (dt) {
+                                dt = dt.split(":");
+                                coordinate["date"] = dt[1] + "/" + dt[2] + "/" + dt[0];
+                            } else {
+                                coordinate["date"] = "";
+                            }
+                            
+                            coordinate["time"] = EXIF.getTag(this,"GPSTimeStamp") || "";
+                            coordinate["hpe"] = EXIF.getTag(this,"GPSHPositioningError") || "";
+                            document.getElementById("coordinateCSV").value += coordinate["name"] + ',' +
+                                coordinate["lat"] + "," + coordinate["lon"] + "," +
+                                coordinate["alt"] + "," + coordinate["alt_ref"] + "," +
+                                coordinate["speed"] + "," + coordinate["speed_ref"] + "," +
+                                coordinate["head"] + "," + coordinate["head_ref"] + "," +
+                                coordinate["date"] + "," + coordinate["time"] + "," +
+                                coordinate["hpe"] + "\n"
+                        });
+                        
+                    }
+                    console.log("done!");
+                };
+            }
+        </script>
+    </body>
+    
+</html>
