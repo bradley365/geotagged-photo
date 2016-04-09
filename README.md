@@ -14,7 +14,7 @@ See a [Demo](http://bradley365.elementfx.com/geotagged-photo/).
 ###Attribution
 Original source of the [exif-js](https://github.com/exif-js/exif-js) library use in this app : [exif-js and contributors - https://github.com/exif-js/exif-js](https://github.com/exif-js/exif-js).
 
-*exif.js modified*: [bradleynhicks](https://github.com/bradleynhicks), March2016
+*exif.js modified*: [bradleyn365](https://github.com/bradley365), March2016
 
 *CDN's/API's* used in this app:
 
